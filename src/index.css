@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Light Theme Variables */
+  --bg-main: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-main: #101828;
+  --text-muted: #667085;
+  --border-color: #e4e7ec;
+  --header-bg: #ffffff;
+  
+  --profit-color: #02b15a;
+  --loss-color: #e54b4b;
+  --brand-blue: #0062ff;
+  
+  --after-harvesting-bg-gradient: linear-gradient(135deg, #18A0FB 0%, #0062FF 100%);
+  --after-harvesting-text: #ffffff;
+  --checkbox-bg: #ffffff;
+  --checkbox-border: #d0d5dd;
+  --row-hover: #f9fafb;
+  --skeleton-base: #e9ecef;
+  --skeleton-shine: #f8f9fa;
+}
+
+[data-theme='dark'] {
+  /* Dark Theme Variables */
+  --bg-main: #13141a;
+  --bg-card: #1c1d26;
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
+  --border-color: #2d3748;
+  --header-bg: #1c1d26;
+  
+  --profit-color: #02b15a;
+  --loss-color: #e54b4b;
+  --brand-blue: #0062ff;
+  
+  --after-harvesting-bg-gradient: linear-gradient(135deg, #18A0FB 0%, #0062FF 100%);
+  --after-harvesting-text: #ffffff;
+  --checkbox-bg: #1c1d26;
+  --checkbox-border: #475467;
+  --row-hover: #262734;
+  --skeleton-base: #262734;
+  --skeleton-shine: #2e3348;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.profit-text {
+  color: var(--profit-color);
+  font-weight: 500;
+}
+
+.loss-text {
+  color: var(--loss-color);
+  font-weight: 500;
+}
+
+/* Custom Scrollbar for better UI */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
