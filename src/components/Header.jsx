@@ -16,9 +16,7 @@ const Header = () => {
         <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
           {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
         </button>
-        {/* <button style={{ color: 'var(--text-main)' }}>
-          <Menu size={24} />
-        </button> */}
+        
       </div>
     </header>
   );
