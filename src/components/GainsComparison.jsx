@@ -111,8 +111,8 @@ const GainsComparison = ({ preHarvesting, postHarvesting, savings }) => {
         {savings > 0 && (
           <div className="savings-banner">
             <span>🎉</span>
-            <span>You are going to save upto</span>
-            <span style={{ fontWeight: 700 }} className="ui-tooltip-container">
+            <span>You're going to save</span>
+            <span style={{ fontWeight: 700, marginLeft: '8px' }} className="ui-tooltip-container">
               {Math.abs(savings) >= 1000000 ? formatCompactCurrency(savings) : formatCurrencyWithCents(savings)}
               <div className="ui-tooltip">{formatCurrencyWithCents(savings)}</div>
             </span>

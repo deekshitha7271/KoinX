@@ -2,18 +2,32 @@ import React, { useState, useMemo } from 'react';
 import { formatCurrency, formatCurrencyWithCents, formatCompactCurrency } from '../utils/formatters';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
-const TooltipValue = ({ compactValue, fullValue, isLoss }) => {
+const SortableHeader = ({ title, sortKey, currentSort, onSort, subText }) => (
+  <th>
+    <div className="sortable-header" onClick={() => onSort(sortKey)}>
+      {currentSort.key === sortKey && currentSort.direction === 'desc' && <ChevronDown size={14} />}
+      {currentSort.key === sortKey && currentSort.direction === 'asc' && <ChevronUp size={14} />}
+      {title}
+    </div>
+    {subText && <div className="sub-text">{subText}</div>}
+  </th>
+);
+
+const TooltipValue = ({ compactValue, fullValue, isLoss, isProfit }) => {
+  const displayValue = isProfit && !compactValue.startsWith('+') ? `+${compactValue}` : compactValue;
+  const fullDisplayValue = isProfit && !fullValue.startsWith('+') ? `+${fullValue}` : fullValue;
+
   return (
     <div className={`ui-tooltip-container ${isLoss ? 'loss-text' : 'profit-text'}`}>
-      {compactValue}
-      <div className="ui-tooltip">{fullValue}</div>
+      {displayValue}
+      <div className="ui-tooltip">{fullDisplayValue}</div>
     </div>
   );
 };
 
-const TooltipPlainValue = ({ compactValue, fullValue }) => {
+const TooltipPlainValue = ({ compactValue, fullValue, className = '' }) => {
   return (
-    <div className="ui-tooltip-container" style={{ fontWeight: 600 }}>
+    <div className={`ui-tooltip-container ${className}`}>
       {compactValue}
       <div className="ui-tooltip">{fullValue}</div>
     </div>
@@ -22,26 +36,45 @@ const TooltipPlainValue = ({ compactValue, fullValue }) => {
 
 const HoldingsTable = ({ holdings, selectedAssetIds, onToggleAsset, onSelectAll }) => {
   const [showAll, setShowAll] = useState(false);
-  const [sortOrder, setSortOrder] = useState('none'); // 'none', 'desc', 'asc'
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'none' });
 
   const allSelected = holdings.length > 0 && selectedAssetIds.size === holdings.length;
 
-  const handleSortClick = () => {
-    if (sortOrder === 'none') setSortOrder('desc');
-    else if (sortOrder === 'desc') setSortOrder('asc');
-    else setSortOrder('none');
+  const handleSortClick = (key) => {
+    let direction = 'desc';
+    if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = 'asc';
+    } else if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'none';
+      key = null;
+    }
+    setSortConfig({ key, direction });
   };
 
   const processedHoldings = useMemo(() => {
     let result = [...holdings];
-    if (sortOrder !== 'none') {
+    if (sortConfig.key && sortConfig.direction !== 'none') {
       result.sort((a, b) => {
-        if (sortOrder === 'asc') return a.stcg.gain - b.stcg.gain;
-        return b.stcg.gain - a.stcg.gain;
+        let valA, valB;
+        switch (sortConfig.key) {
+          case 'asset': valA = a.coinName; valB = b.coinName; break;
+          case 'holdings': valA = a.totalHolding; valB = b.totalHolding; break;
+          case 'price': valA = a.currentPrice; valB = b.currentPrice; break;
+          case 'stcg': valA = a.stcg.gain; valB = b.stcg.gain; break;
+          case 'ltcg': valA = a.ltcg.gain; valB = b.ltcg.gain; break;
+          default: return 0;
+        }
+        
+        if (sortConfig.key === 'asset') {
+          return sortConfig.direction === 'asc' 
+            ? valA.localeCompare(valB) 
+            : valB.localeCompare(valA);
+        }
+        return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
       });
     }
     return showAll ? result : result.slice(0, 4);
-  }, [holdings, sortOrder, showAll]);
+  }, [holdings, sortConfig, showAll]);
 
   return (
     <div className="holdings-container">
@@ -58,20 +91,11 @@ const HoldingsTable = ({ holdings, selectedAssetIds, onToggleAsset, onSelectAll 
                 onChange={onSelectAll}
               />
             </th>
-            <th>Asset</th>
-            <th>
-              Holdings
-              <div className="sub-text">Avg Buy Price</div>
-            </th>
-            <th>Current Price</th>
-            <th>
-              <div className="sortable-header" onClick={handleSortClick}>
-                {sortOrder === 'desc' && <ChevronDown size={14} />}
-                {sortOrder === 'asc' && <ChevronUp size={14} />}
-                Short-Term
-              </div>
-            </th>
-            <th>Long-Term</th>
+            <SortableHeader title="Asset" sortKey="asset" currentSort={sortConfig} onSort={handleSortClick} />
+            <SortableHeader title="Holdings" sortKey="holdings" currentSort={sortConfig} onSort={handleSortClick} subText="Avg Buy Price" />
+            <SortableHeader title="Current Price" sortKey="price" currentSort={sortConfig} onSort={handleSortClick} />
+            <SortableHeader title="Short-Term" sortKey="stcg" currentSort={sortConfig} onSort={handleSortClick} />
+            <SortableHeader title="Long-Term" sortKey="ltcg" currentSort={sortConfig} onSort={handleSortClick} />
             <th>Amount to Sell</th>
           </tr>
         </thead>
@@ -99,17 +123,23 @@ const HoldingsTable = ({ holdings, selectedAssetIds, onToggleAsset, onSelectAll 
                   </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 500 }}>
-                    {formatCurrency(asset.totalHolding)} {asset.coin}
-                  </div>
+                  <TooltipPlainValue 
+                    className="font-medium"
+                    compactValue={`${formatCurrency(asset.totalHolding)} ${asset.coin}`}
+                    fullValue={`${asset.totalHolding} ${asset.coin}`}
+                  />
                   <div className="sub-text">
-                    {formatCurrencyWithCents(asset.averageBuyPrice)}/{asset.coin}
+                    <TooltipPlainValue 
+                      compactValue={`${formatCurrencyWithCents(asset.averageBuyPrice)}/${asset.coin}`}
+                      fullValue={`${asset.averageBuyPrice}/${asset.coin}`}
+                    />
                   </div>
                 </td>
                 <td>
                   <TooltipPlainValue 
-                    compactValue={formatCompactCurrency(asset.currentPrice)} 
-                    fullValue={formatCurrencyWithCents(asset.currentPrice)} 
+                    className="font-semibold"
+                    compactValue={formatCompactCurrency(asset.currentPrice)}
+                    fullValue={formatCurrencyWithCents(asset.currentPrice)}
                   />
                 </td>
                 <td>
@@ -117,9 +147,13 @@ const HoldingsTable = ({ holdings, selectedAssetIds, onToggleAsset, onSelectAll 
                     compactValue={formatCompactCurrency(asset.stcg.gain)}
                     fullValue={formatCurrencyWithCents(asset.stcg.gain)}
                     isLoss={asset.stcg.gain < 0}
+                    isProfit={asset.stcg.gain > 0}
                   />
                   <div className="sub-text">
-                    {formatCurrency(asset.stcg.balance)} {asset.coin}
+                    <TooltipPlainValue 
+                      compactValue={`${formatCurrency(asset.stcg.balance)} ${asset.coin}`}
+                      fullValue={`${asset.stcg.balance} ${asset.coin}`}
+                    />
                   </div>
                 </td>
                 <td>
@@ -127,15 +161,25 @@ const HoldingsTable = ({ holdings, selectedAssetIds, onToggleAsset, onSelectAll 
                     compactValue={formatCompactCurrency(asset.ltcg.gain)}
                     fullValue={formatCurrencyWithCents(asset.ltcg.gain)}
                     isLoss={asset.ltcg.gain < 0}
+                    isProfit={asset.ltcg.gain > 0}
                   />
                   <div className="sub-text">
-                    {formatCurrency(asset.ltcg.balance)} {asset.coin}
+                    <TooltipPlainValue 
+                      compactValue={`${formatCurrency(asset.ltcg.balance)} ${asset.coin}`}
+                      fullValue={`${asset.ltcg.balance} ${asset.coin}`}
+                    />
                   </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 500 }}>
-                    {isSelected ? `${formatCurrency(asset.totalHolding)} ${asset.coin}` : '-'}
-                  </div>
+                  {isSelected ? (
+                    <TooltipPlainValue 
+                      className="font-medium"
+                      compactValue={`${formatCurrency(asset.totalHolding)} ${asset.coin}`}
+                      fullValue={`${asset.totalHolding} ${asset.coin}`}
+                    />
+                  ) : (
+                    <div className="font-medium">-</div>
+                  )}
                 </td>
               </tr>
             );
