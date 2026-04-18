@@ -63,20 +63,20 @@ npm run build
 
 | Feature | Status |
 | --- | :---: |
-| Pre Harvesting Capital Gains card |  |
-| After Harvesting Capital Gains card |  |
-| Real-time harvesting calculation on selection |  |
-| Holdings table with checkbox selection |  |
-| Select All / Deselect All |  |
-| Sort by Short-Term gain (asc/desc) |  |
-| View All / Show Less pagination |  |
-| Hover tooltips showing full numeric values |  |
-| "How it works?" popup modal |  |
-| Animated Skeleton Loader |  |
-| Error state with retry button |  |
-| Light / Dark theme toggle |  |
-| Mobile responsive design |  |
-| Mock API using Promises |  |
+| Pre Harvesting Capital Gains card | Done |
+| After Harvesting Capital Gains card | Done |
+| Real-time harvesting calculation on selection | Done |
+| Holdings table with checkbox selection | Done |
+| Select All / Deselect All | Done |
+| Multi-column Sorting (Asset, Holdings, Prices, Gains) | Done |
+| View All / Show Less pagination | Done |
+| Exact-Value Hover Tooltips across entire table | Done |
+| "How it works?" popup modal | Done |
+| Animated Loader (react-loader-spinner) | Done |
+| Error state with retry button | Done |
+| Light / Dark theme toggle | Done |
+| Mobile responsive design | Done |
+| Mock API using Promises | Done |
 
 ---
 
@@ -141,6 +141,7 @@ src/
 | Vite 8 | Build tool & dev server |
 | Vanilla CSS | Styling with CSS Custom Properties for theming |
 | Lucide React | Icon library |
+| react-loader-spinner | High quality animated loading states |
 | Mock API | Promise-based data simulation (no backend needed) |
 
 ---

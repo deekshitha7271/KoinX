@@ -11,7 +11,7 @@ const TaxHarvesting = () => {
   const [holdings, setHoldings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [disclaimerOpen, setDisclaimerOpen] = useState(true);
+  const [disclaimerOpen, setDisclaimerOpen] = useState(false);
   const [howItWorksOpen, setHowItWorksOpen] = useState(false);
 
   const {

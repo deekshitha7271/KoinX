@@ -379,8 +379,8 @@
   top: 30px;
   left: 0;
   width: 320px;
-  background-color: #ffffff;
-  color: #111827;
+  background-color: #111827;
+  color: #ffffff;
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
@@ -398,6 +398,15 @@
   margin-left: -8px;
   border-width: 8px;
   border-style: solid;
+  border-color: transparent transparent #111827 transparent;
+}
+
+[data-theme='dark'] .how-it-works-popup {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+[data-theme='dark'] .how-it-works-popup::after {
   border-color: transparent transparent #ffffff transparent;
 }
 
@@ -464,6 +473,11 @@
 }
 .sortable-header:hover {
   color: var(--brand-blue) !important;
+}
+
+/* Ensure the Asset sortable header stays left-aligned */
+.holdings-table th:nth-child(2) .sortable-header {
+  justify-content: flex-start;
 }
 
 /* =====================
