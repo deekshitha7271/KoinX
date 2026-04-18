@@ -19,7 +19,6 @@ const TaxHarvesting = () => {
     toggleAssetSelection,
     selectAll,
     postHarvestingGains,
-    preHarvestingRealised,
     savings
   } = useTaxHarvesting(initialGains, holdings);
 

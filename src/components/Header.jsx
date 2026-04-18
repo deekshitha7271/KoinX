@@ -1,7 +1,5 @@
-import React from 'react';
-import { Moon, Sun, Menu } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import TaxHarvesting from './TaxHarvesting';
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
